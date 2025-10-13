@@ -122,7 +122,7 @@ class _MusicScreenState extends State<MusicScreen>
         IconButton(
           icon: Icon(
             _isSearching ? Icons.close : Icons.search,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
           onPressed: () {
             setState(() {
@@ -189,7 +189,7 @@ class _MusicScreenState extends State<MusicScreen>
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected 
-                ? MochiTheme.pastelColors['babyBlue']!.withOpacity(0.2)
+                ? MochiTheme.pastelColors['blue']!.withOpacity(0.2)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
@@ -199,7 +199,7 @@ class _MusicScreenState extends State<MusicScreen>
               Icon(
                 icon,
                 color: isSelected 
-                    ? MochiTheme.pastelColors['babyBlue']!
+                    ? MochiTheme.pastelColors['blue']!
                     : const Color(0xFF718096),
                 size: 20,
               ),
@@ -208,7 +208,7 @@ class _MusicScreenState extends State<MusicScreen>
                 title,
                 style: TextStyle(
                   color: isSelected 
-                      ? MochiTheme.pastelColors['babyBlue']!
+                      ? MochiTheme.pastelColors['blue']!
                       : const Color(0xFF718096),
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -311,7 +311,7 @@ class _MusicScreenState extends State<MusicScreen>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: MochiTheme.pastelColors['babyBlue']!.withOpacity(0.3),
+            color: MochiTheme.pastelColors['blue']!.withOpacity(0.3),
             blurRadius: 20,
             spreadRadius: 5,
           ),
@@ -417,7 +417,7 @@ class _MusicScreenState extends State<MusicScreen>
                     borderRadius: BorderRadius.circular(3),
                     gradient: LinearGradient(
                       colors: [
-                        MochiTheme.pastelColors['babyBlue']!,
+                        MochiTheme.pastelColors['blue']!,
                         MochiTheme.pastelColors['softPink']!,
                       ],
                     ),
@@ -490,13 +490,13 @@ class _MusicScreenState extends State<MusicScreen>
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [
-            MochiTheme.pastelColors['babyBlue']!,
+            MochiTheme.pastelColors['blue']!,
             MochiTheme.pastelColors['softPink']!,
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: MochiTheme.pastelColors['babyBlue']!.withOpacity(0.3),
+            color: MochiTheme.pastelColors['blue']!.withOpacity(0.3),
             blurRadius: 15,
             spreadRadius: 2,
           ),
@@ -534,7 +534,7 @@ class _MusicScreenState extends State<MusicScreen>
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isActive 
-            ? MochiTheme.pastelColors['babyBlue']!.withOpacity(0.2)
+            ? MochiTheme.pastelColors['blue']!.withOpacity(0.2)
             : Colors.white,
         boxShadow: [
           BoxShadow(
@@ -548,7 +548,7 @@ class _MusicScreenState extends State<MusicScreen>
         icon: Icon(
           icon,
           color: isActive 
-              ? MochiTheme.pastelColors['babyBlue']!
+              ? MochiTheme.pastelColors['blue']!
               : const Color(0xFF2D3748),
           size: size,
         ),
@@ -749,7 +749,7 @@ class _MusicScreenState extends State<MusicScreen>
                 IconButton(
                   icon: Icon(
                     musicService.isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: MochiTheme.pastelColors['babyBlue'],
+                    color: MochiTheme.pastelColors['blue'],
                   ),
                   onPressed: () {
                     if (musicService.isPlaying) {
@@ -762,7 +762,7 @@ class _MusicScreenState extends State<MusicScreen>
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: MochiTheme.pastelColors['babyBlue'],
+                    color: MochiTheme.pastelColors['blue'],
                   ),
                   onPressed: () => musicService.playNext(),
                 ),

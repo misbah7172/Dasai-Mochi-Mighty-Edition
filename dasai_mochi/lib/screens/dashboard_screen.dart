@@ -27,8 +27,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
-  late AnimationController _floatController;
-  late AnimationController _breathController;
   late PageController _pageController;
   
   int _currentPageIndex = 0;
@@ -36,7 +34,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   String _currentDate = '';
   String _weatherInfo = '🌤️ 24°C';
   String _batteryLevel = '85%';
-  String _mochiMood = 'happy';
   bool _isListening = false;
   
   final List<String> _quickCommands = [
@@ -68,16 +65,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   void _initializeAnimations() {
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _floatController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _breathController = AnimationController(
-      duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -113,8 +100,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void dispose() {
     _pulseController.dispose();
-    _floatController.dispose();
-    _breathController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -125,7 +110,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       builder: (context, userPrefs, child) {
         final themeColors = userPrefs.getThemeColors();
         return Scaffold(
-          backgroundColor: themeColors['background']!.withOpacity(0.8),
+          backgroundColor: Colors.grey[50],
           body: SafeArea(
             child: Column(
               children: [
@@ -143,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildHeader(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -151,34 +136,20 @@ class _DashboardScreenState extends State<DashboardScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                userPrefs.personalizedGreeting.replaceAll(RegExp(r'[^\w\s]'), ''),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: themeColors['userColor']!,
+                _currentTime,
+                style: const TextStyle(
+                  fontSize: 32,
                   fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 4),
-              AnimatedTextKit(
-                animatedTexts: [
-                  TyperAnimatedText(
-                    _currentTime,
-                    textStyle: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: themeColors['primary']!,
-                    ),
-                    speed: const Duration(milliseconds: 100),
-                  ),
-                ],
-                totalRepeatCount: 1,
-              ),
+              const SizedBox(height: 2),
               Text(
                 _currentDate,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: themeColors['primary']!.withOpacity(0.7),
-                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
@@ -194,48 +165,35 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildConnectionStatus(bool isConnected) {
-    return AnimatedBuilder(
-      animation: _pulseController,
-      builder: (context, child) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isConnected 
-                ? Colors.green.shade600.withOpacity(0.9)
-                : Colors.red.shade600.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: (isConnected 
-                    ? Colors.green.shade600 
-                    : Colors.red.shade600)
-                    .withOpacity(0.3 + (_pulseController.value * 0.3)),
-                blurRadius: 10,
-                spreadRadius: 2,
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isConnected ? Colors.green[50] : Colors.red[50],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isConnected ? Colors.green[200]! : Colors.red[200]!,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isConnected ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+            color: isConnected ? Colors.green[600] : Colors.red[600],
+            size: 16,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isConnected ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
-                color: Colors.white,
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                isConnected ? 'Connected' : 'Searching...',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ],
+          const SizedBox(width: 6),
+          Text(
+            isConnected ? 'Connected' : 'Searching',
+            style: TextStyle(
+              color: isConnected ? Colors.green[700] : Colors.red[700],
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -262,9 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMochiAvatar(userPrefs, themeColors),
-          const SizedBox(height: 20),
-          _buildPersonalizedCard(userPrefs, themeColors),
+          _buildSimpleWelcomeCard(userPrefs, themeColors),
           const SizedBox(height: 20),
           _buildWeatherCard(themeColors),
           const SizedBox(height: 20),
@@ -276,136 +232,41 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildMochiAvatar(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
-    final mochiExpressions = userPrefs.getMochiExpressions();
-    return AnimatedBuilder(
-      animation: _floatController,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, 10 * _floatController.value),
-          child: AnimatedBuilder(
-            animation: _breathController,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: 1.0 + (0.1 * _breathController.value),
-                child: GestureDetector(
-                  onTap: _onMochiTap,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          themeColors['userColor']!.withOpacity(0.7),
-                          themeColors['userColor']!,
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: themeColors['userColor']!.withOpacity(0.4),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        mochiExpressions.isNotEmpty 
-                            ? mochiExpressions[DateTime.now().second % mochiExpressions.length]
-                            : '😊',
-                        style: const TextStyle(fontSize: 48),
-                      ),
-                    ),
-                  ),
-                ).animate()
-                  .shimmer(delay: const Duration(seconds: 2), duration: const Duration(seconds: 2))
-                  .then()
-                  .shake(hz: 2, curve: Curves.easeInOut),
-              );
-            },
+  Widget _buildSimpleWelcomeCard(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildPersonalizedCard(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
-    return MochiCard(
-      backgroundColor: themeColors['surface']!.withOpacity(0.9),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.person,
-                color: themeColors['userColor'],
-                size: 24,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Welcome back, ${userPrefs.userName}!',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: themeColors['primary'],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
           Text(
-            'Personality: ${userPrefs.mochiPersonality.toUpperCase()}',
-            style: TextStyle(
-              fontSize: 12,
-              color: themeColors['userColor'],
+            'Hello, ${userPrefs.userName}',
+            style: const TextStyle(
+              fontSize: 24,
               fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
           ),
           const SizedBox(height: 8),
-          if (userPrefs.interests.isNotEmpty) ...[
-            Text(
-              'Your interests: ${userPrefs.interests.take(3).join(', ')}',
-              style: TextStyle(
-                fontSize: 14,
-                color: themeColors['primary']!.withOpacity(0.8),
-              ),
+          Text(
+            'Ready to make today productive?',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w400,
             ),
-            const SizedBox(height: 8),
-          ],
-          Row(
-            children: [
-              Icon(
-                Icons.cake,
-                size: 16,
-                color: themeColors['accent'],
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Age: ${userPrefs.userAge}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: themeColors['primary']!.withOpacity(0.6),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Icon(
-                Icons.palette,
-                size: 16,
-                color: themeColors['accent'],
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Theme: ${userPrefs.currentTheme}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: themeColors['primary']!.withOpacity(0.6),
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -413,56 +274,57 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildWeatherCard(Map<String, Color> themeColors) {
-    return MochiCard(
-      backgroundColor: themeColors['surface']!.withOpacity(0.9),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: themeColors['accent']!.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: themeColors['accent']!.withOpacity(0.3),
-                width: 2,
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.wb_sunny,
-                size: 28,
-                color: themeColors['accent'],
-              ),
-            ),
+          Icon(
+            Icons.wb_sunny,
+            size: 24,
+            color: Colors.orange[400],
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Weather Today',
+                  'Weather',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  _weatherInfo,
+                  _weatherInfo.replaceAll(RegExp(r'[^\w\s°C°F\-]'), ''),
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.grey[600],
                   ),
                 ),
               ],
             ),
           ),
-          MochiButton(
-            text: '',
-            icon: Icons.refresh,
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              size: 20,
+              color: Colors.grey[500],
+            ),
             onPressed: _refreshWeather,
           ),
         ],
@@ -470,7 +332,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildQuickStatsRow() {
+  Widget _buildQuickStatsRow(Map<String, Color> themeColors) {
     return Row(
       children: [
         Expanded(
@@ -478,16 +340,16 @@ class _DashboardScreenState extends State<DashboardScreen>
             iconData: Icons.battery_std,
             title: 'Battery',
             value: _batteryLevel,
-            color: Colors.green.shade600, // Health/good status color
+            color: Colors.green[600]!,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
             iconData: Icons.signal_cellular_alt,
-            title: 'Connection',
+            title: 'Signal',
             value: 'Strong',
-            color: Colors.blue.shade600, // Work/information color
+            color: Colors.blue[600]!,
           ),
         ),
       ],
@@ -500,50 +362,63 @@ class _DashboardScreenState extends State<DashboardScreen>
     required String value,
     required Color color,
   }) {
-    return MochiCard(
-      backgroundColor: color.withOpacity(0.15),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 2,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(
-              iconData,
-              size: 28,
-              color: color,
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(
+            iconData,
+            size: 22,
+            color: color,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
             ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: color.withOpacity(0.8),
-              ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: color.withOpacity(0.9),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildRecentReminders() {
-    return MochiCard(
+  Widget _buildRecentReminders(Map<String, Color> themeColors) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -551,85 +426,70 @@ class _DashboardScreenState extends State<DashboardScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Upcoming Reminders',
+                'Today\'s Reminders',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
-              MochiButton(
-                text: 'See All',
+              TextButton(
                 onPressed: _openReminders,
+                child: Text(
+                  'View All',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          _buildReminderItem(Icons.medication, 'Take vitamins', '9:00 AM', Colors.red.shade600),
-          _buildReminderItem(Icons.groups, 'Team meeting', '2:00 PM', Colors.blue.shade600),
-          _buildReminderItem(Icons.music_note, 'Music practice', '6:30 PM', Colors.purple.shade600),
+          _buildReminderItem(Icons.medication_outlined, 'Take vitamins', '9:00 AM'),
+          _buildReminderItem(Icons.groups_outlined, 'Team meeting', '2:00 PM'),
+          _buildReminderItem(Icons.music_note_outlined, 'Music practice', '6:30 PM'),
         ],
       ),
     );
   }
 
-  Widget _buildReminderItem(IconData iconData, String title, String time, Color color) {
+  Widget _buildReminderItem(IconData iconData, String title, String time) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: color.withOpacity(0.3),
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                iconData,
-                size: 20,
-                color: color,
-              ),
-            ),
+          Icon(
+            iconData,
+            size: 20,
+            color: Colors.grey[600],
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  time,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ),
-              ],
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
             ),
           ),
-          Icon(
-            Icons.chevron_right,
-            color: Colors.black.withOpacity(0.3),
+          Text(
+            time,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickActionsPage() {
+  Widget _buildQuickActionsPage(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -746,7 +606,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     return command.replaceAll(RegExp(r'[^\w\s]'), '').trim();
   }
 
-  Widget _buildStatusPage() {
+  Widget _buildStatusPage(Map<String, Color> themeColors) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -863,7 +723,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildVoiceInterface() {
+  Widget _buildVoiceInterface(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -889,7 +749,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: (_isListening ? Colors.red : MochiTheme.pastelColors['softPink']!)
+                            color: (_isListening ? Colors.red : MochiTheme.pastelColors['purple']!)
                                 .withOpacity(0.3 + (_isListening ? _pulseController.value * 0.3 : 0)),
                             blurRadius: 20,
                             spreadRadius: _isListening ? 10 : 5,
@@ -980,12 +840,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   // Event handlers
-  void _onMochiTap() {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _mochiMood = _mochiMood == 'happy' ? 'excited' : 'happy';
-    });
-  }
 
   void _refreshWeather() async {
     HapticFeedback.lightImpact();

@@ -21,15 +21,15 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MochiTheme.pastelColors['babyBlue'],
+      backgroundColor: MochiTheme.pastelColors['blue'],
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              MochiTheme.pastelColors['babyBlue']!,
-              MochiTheme.pastelColors['softPink']!.withValues(alpha: 0.7),
+              MochiTheme.pastelColors['blue']!,
+              MochiTheme.pastelColors['purple']!.withValues(alpha: 0.7),
             ],
           ),
         ),

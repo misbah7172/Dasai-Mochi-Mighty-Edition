@@ -106,7 +106,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
         IconButton(
           icon: Icon(
             Icons.refresh,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
           onPressed: _refreshBatteryData,
         ),
@@ -120,12 +120,12 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
       decoration: BoxDecoration(
         color: isConnected 
             ? MochiTheme.pastelColors['mintGreen']!.withOpacity(0.3)
-            : MochiTheme.pastelColors['softPink']!.withOpacity(0.3),
+            : MochiTheme.pastelColors['purple']!.withOpacity(0.3),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
           color: isConnected 
               ? MochiTheme.pastelColors['mintGreen']!
-              : MochiTheme.pastelColors['softPink']!,
+              : MochiTheme.pastelColors['purple']!,
           width: 1,
         ),
       ),
@@ -137,7 +137,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
             decoration: BoxDecoration(
               color: isConnected 
                   ? MochiTheme.pastelColors['mintGreen']!
-                  : MochiTheme.pastelColors['softPink']!,
+                  : MochiTheme.pastelColors['purple']!,
               shape: BoxShape.circle,
             ),
           )
@@ -347,7 +347,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
         Icon(
           icon,
           size: 24,
-          color: MochiTheme.pastelColors['babyBlue']!,
+          color: MochiTheme.pastelColors['blue']!,
         ),
         const SizedBox(width: 15),
         Expanded(
@@ -403,7 +403,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
             subtitle: const Text('Reduce performance to extend battery life'),
             value: false,
             onChanged: (value) => _togglePowerSaving(value),
-            activeColor: MochiTheme.pastelColors['babyBlue'],
+            activeColor: MochiTheme.pastelColors['blue'],
           ),
           const Divider(),
           SwitchListTile(
@@ -412,7 +412,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
             subtitle: const Text('Get notified when battery is low'),
             value: true,
             onChanged: (value) => _toggleLowBatteryAlerts(value),
-            activeColor: MochiTheme.pastelColors['babyBlue'],
+            activeColor: MochiTheme.pastelColors['blue'],
           ),
           const Divider(),
           SwitchListTile(
@@ -421,7 +421,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
             subtitle: const Text('Protect battery health during charging'),
             value: true,
             onChanged: (value) => _toggleOptimizeCharging(value),
-            activeColor: MochiTheme.pastelColors['babyBlue'],
+            activeColor: MochiTheme.pastelColors['blue'],
           ),
         ],
       ),
@@ -489,7 +489,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      MochiTheme.pastelColors['babyBlue']!,
+                      MochiTheme.pastelColors['blue']!,
                       MochiTheme.pastelColors['lavender']!,
                     ],
                   ),
@@ -521,13 +521,13 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
           Container(
             padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
-              color: MochiTheme.pastelColors['softPink']!.withOpacity(0.3),
+              color: MochiTheme.pastelColors['purple']!.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.battery_unknown,
               size: 80,
-              color: MochiTheme.pastelColors['softPink'],
+              color: MochiTheme.pastelColors['purple'],
             ),
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
@@ -556,7 +556,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
             icon: const Icon(Icons.bluetooth),
             label: const Text('Connect to Mochi'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: MochiTheme.pastelColors['babyBlue'],
+              backgroundColor: MochiTheme.pastelColors['blue'],
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               shape: RoundedRectangleBorder(
@@ -575,7 +575,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     } else if (_batteryLevel > 30) {
       return MochiTheme.pastelColors['lemonYellow']!;
     } else {
-      return MochiTheme.pastelColors['softPink']!;
+      return MochiTheme.pastelColors['purple']!;
     }
   }
 
@@ -613,7 +613,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Battery data refreshed! 🔋'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
         duration: const Duration(seconds: 2),
       ),
     );
@@ -626,7 +626,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Searching for Mochi device... 🔍'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
         duration: const Duration(seconds: 3),
       ),
     );
@@ -637,7 +637,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Power saving mode ${value ? 'enabled' : 'disabled'}'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
       ),
     );
   }
@@ -647,7 +647,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Low battery alerts ${value ? 'enabled' : 'disabled'}'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
       ),
     );
   }
@@ -657,7 +657,7 @@ class _BatteryStatusScreenState extends State<BatteryStatusScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Optimized charging ${value ? 'enabled' : 'disabled'}'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
       ),
     );
   }

@@ -184,9 +184,10 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildWelcomePage() {
     return Padding(
       padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           Text(
             'Welcome to Dasai Mochi!',
             style: TextStyle(
@@ -236,6 +237,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ).animate().fadeIn(delay: 400.ms, duration: 800.ms).slideY(begin: 0.2),
         ],
+        ),
       ),
     );
   }

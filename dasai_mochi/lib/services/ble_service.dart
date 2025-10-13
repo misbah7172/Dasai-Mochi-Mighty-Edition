@@ -346,6 +346,80 @@ class BLEService extends ChangeNotifier {
     return await sendCommand(ESP32Commands.displayTextCommand(text));
   }
 
+  /// WiFi Configuration Methods
+  Future<bool> configureWifi(String ssid, String password) async {
+    debugPrint("BLE: Configuring WiFi - SSID: $ssid");
+    return await sendCommand(ESP32Commands.configureWifiCommand(ssid, password));
+  }
+  
+  Future<List<String>> scanWifiNetworks() async {
+    debugPrint("BLE: Scanning for WiFi networks");
+    final success = await sendCommand(ESP32Commands.scanWifiNetworksCommand());
+    if (success) {
+      // Wait for response with network list
+      // This would be handled by the characteristic subscription
+      // For now, return empty list - actual implementation would parse response
+      return [];
+    }
+    return [];
+  }
+  
+  Future<Map<String, dynamic>?> getWifiStatus() async {
+    debugPrint("BLE: Getting WiFi status");
+    final success = await sendCommand(ESP32Commands.getWifiStatusCommand());
+    if (success) {
+      // Return WiFi status - actual implementation would parse response
+      return null;
+    }
+    return null;
+  }
+  
+  Future<bool> disconnectWifi() async {
+    debugPrint("BLE: Disconnecting WiFi");
+    return await sendCommand(ESP32Commands.disconnectWifiCommand());
+  }
+  
+  Future<bool> resetWifi() async {
+    debugPrint("BLE: Resetting WiFi settings");
+    return await sendCommand(ESP32Commands.resetWifiCommand());
+  }
+
+  /// Device Settings Methods
+  Future<bool> setBrightness(int brightness) async {
+    debugPrint("BLE: Setting brightness to $brightness%");
+    return await sendCommand(ESP32Commands.setBrightnessCommand(brightness));
+  }
+  
+  Future<bool> setVolume(int volume) async {
+    debugPrint("BLE: Setting volume to $volume%");
+    return await sendCommand(ESP32Commands.setVolumeCommand(volume));
+  }
+  
+  Future<bool> setAutoConnect(bool enabled) async {
+    debugPrint("BLE: Setting auto-connect to $enabled");
+    return await sendCommand(ESP32Commands.setAutoConnectCommand(enabled));
+  }
+  
+  Future<bool> setLowPowerMode(bool enabled) async {
+    debugPrint("BLE: Setting low power mode to $enabled");
+    return await sendCommand(ESP32Commands.setLowPowerModeCommand(enabled));
+  }
+  
+  Future<bool> calibrateSensors() async {
+    debugPrint("BLE: Starting sensor calibration");
+    return await sendCommand(ESP32Commands.calibrateSensorsCommand());
+  }
+  
+  Future<bool> updateFirmware() async {
+    debugPrint("BLE: Starting firmware update");
+    return await sendCommand(ESP32Commands.updateFirmwareCommand());
+  }
+  
+  Future<bool> factoryReset() async {
+    debugPrint("BLE: Performing factory reset");
+    return await sendCommand(ESP32Commands.factoryResetCommand());
+  }
+
   @override
   void dispose() {
     _reconnectTimer?.cancel();

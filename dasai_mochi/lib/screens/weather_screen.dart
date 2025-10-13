@@ -142,14 +142,14 @@ class _WeatherScreenState extends State<WeatherScreen>
         IconButton(
           icon: Icon(
             Icons.refresh,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
           onPressed: _refreshWeatherData,
         ),
         IconButton(
           icon: Icon(
             Icons.settings,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
           onPressed: _showWeatherSettings,
         ),
@@ -176,7 +176,7 @@ class _WeatherScreenState extends State<WeatherScreen>
         children: [
           Icon(
             Icons.location_on,
-            color: MochiTheme.pastelColors['softPink']!,
+            color: MochiTheme.pastelColors['purple']!,
             size: 24,
           ),
           const SizedBox(width: 10),
@@ -193,7 +193,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           IconButton(
             icon: Icon(
               Icons.search,
-              color: MochiTheme.pastelColors['babyBlue']!,
+              color: MochiTheme.pastelColors['blue']!,
             ),
             onPressed: _showLocationSearch,
           ),
@@ -241,7 +241,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected 
-                ? MochiTheme.pastelColors['babyBlue']!.withOpacity(0.2)
+                ? MochiTheme.pastelColors['blue']!.withOpacity(0.2)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
@@ -251,7 +251,7 @@ class _WeatherScreenState extends State<WeatherScreen>
               Icon(
                 icon,
                 color: isSelected 
-                    ? MochiTheme.pastelColors['babyBlue']!
+                    ? MochiTheme.pastelColors['blue']!
                     : const Color(0xFF718096),
                 size: 20,
               ),
@@ -260,7 +260,7 @@ class _WeatherScreenState extends State<WeatherScreen>
                 title,
                 style: TextStyle(
                   color: isSelected 
-                      ? MochiTheme.pastelColors['babyBlue']!
+                      ? MochiTheme.pastelColors['blue']!
                       : const Color(0xFF718096),
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -296,7 +296,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            MochiTheme.pastelColors['babyBlue']!.withOpacity(0.8),
+            MochiTheme.pastelColors['blue']!.withOpacity(0.8),
             MochiTheme.pastelColors['lavender']!.withOpacity(0.8),
           ],
         ),
@@ -431,7 +431,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           Icon(
             icon,
             size: 32,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
           const SizedBox(height: 10),
           Text(
@@ -581,7 +581,7 @@ class _WeatherScreenState extends State<WeatherScreen>
           Icon(
             Icons.arrow_forward_ios,
             size: 16,
-            color: MochiTheme.pastelColors['babyBlue']!,
+            color: MochiTheme.pastelColors['blue']!,
           ),
         ],
       ),
@@ -694,7 +694,7 @@ class _WeatherScreenState extends State<WeatherScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Weather data refreshed! 🌤️'),
-        backgroundColor: MochiTheme.pastelColors['babyBlue'],
+        backgroundColor: MochiTheme.pastelColors['blue'],
         duration: const Duration(seconds: 2),
       ),
     );
@@ -731,7 +731,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             ].map((location) => ListTile(
               leading: Icon(
                 Icons.location_on,
-                color: MochiTheme.pastelColors['softPink']!,
+                color: MochiTheme.pastelColors['purple']!,
               ),
               title: Text(location),
               onTap: () {
@@ -764,19 +764,19 @@ class _WeatherScreenState extends State<WeatherScreen>
               title: const Text('Temperature in Celsius'),
               value: true,
               onChanged: (value) {},
-              activeColor: MochiTheme.pastelColors['babyBlue'],
+              activeColor: MochiTheme.pastelColors['blue'],
             ),
             SwitchListTile(
               title: const Text('Weather Notifications'),
               value: true,
               onChanged: (value) {},
-              activeColor: MochiTheme.pastelColors['babyBlue'],
+              activeColor: MochiTheme.pastelColors['blue'],
             ),
             SwitchListTile(
               title: const Text('Show Weather Tips'),
               value: true,
               onChanged: (value) {},
-              activeColor: MochiTheme.pastelColors['babyBlue'],
+              activeColor: MochiTheme.pastelColors['blue'],
             ),
           ],
         ),
@@ -785,7 +785,7 @@ class _WeatherScreenState extends State<WeatherScreen>
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Close',
-              style: TextStyle(color: MochiTheme.pastelColors['babyBlue']),
+              style: TextStyle(color: MochiTheme.pastelColors['blue']),
             ),
           ),
         ],

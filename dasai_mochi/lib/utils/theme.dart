@@ -2,27 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MochiTheme {
-  // Pastel Color Palettes
+  // Minimal Color Palettes
   static const Map<String, Color> pastelColors = {
-    'babyBlue': Color(0xFFB8E6E6),
-    'softPink': Color(0xFFF7C6D2),
-    'mintGreen': Color(0xFFB8F2B8),
-    'peachOrange': Color(0xFFFFD6B8),
-    'lavender': Color(0xFFE1C6FF),
-    'lemonYellow': Color(0xFFFFF2B8),
-    'coralPink': Color(0xFFFFB8D6),
-    'skyBlue': Color(0xFFB8D6FF),
+    'slate': Color(0xFF64748B),
+    'gray': Color(0xFF6B7280),
+    'neutral': Color(0xFF737373),
+    'stone': Color(0xFF78716C),
+    'blue': Color(0xFF3B82F6),
+    'indigo': Color(0xFF6366F1),
+    'violet': Color(0xFF8B5CF6),
+    'purple': Color(0xFFA855F7),
   };
 
   // Theme variations
   static const Map<String, Map<String, Color>> themes = {
     'default': {
-      'primary': Color(0xFFB8E6E6),
-      'secondary': Color(0xFFF7C6D2),
-      'accent': Color(0xFFFFD6B8),
-      'background': Color(0xFFFFFBF0),
+      'primary': Color(0xFF2C3E50),
+      'secondary': Color(0xFF34495E),
+      'accent': Color(0xFF3498DB),
+      'background': Color(0xFFFAFAFA),
       'surface': Colors.white,
-      'cardBackground': Color(0xFFF8F9FA),
+      'cardBackground': Color(0xFFFFFFFF),
+    },
+    'minimal': {
+      'primary': Color(0xFF2C3E50),
+      'secondary': Color(0xFF7F8C8D),
+      'accent': Color(0xFF3498DB),
+      'background': Color(0xFFF8F9FA),
+      'surface': Colors.white,
+      'cardBackground': Color(0xFFFFFFFF),
     },
     'festival': {
       'primary': Color(0xFFE1C6FF),

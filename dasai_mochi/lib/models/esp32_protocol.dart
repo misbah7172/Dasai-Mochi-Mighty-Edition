@@ -85,6 +85,22 @@ class ESP32Commands {
   static const String syncUserData = 'sync_user_data';
   static const String updatePersonality = 'update_personality';
   
+  // WiFi Configuration Commands
+  static const String configureWifi = 'configure_wifi';
+  static const String scanWifiNetworks = 'scan_wifi';
+  static const String getWifiStatus = 'get_wifi_status';
+  static const String disconnectWifi = 'disconnect_wifi';
+  static const String resetWifi = 'reset_wifi';
+  
+  // Device Settings Commands
+  static const String setBrightness = 'set_brightness';
+  static const String setVolume = 'set_volume';
+  static const String setAutoConnect = 'set_auto_connect';
+  static const String setLowPowerMode = 'set_low_power_mode';
+  static const String calibrateSensors = 'calibrate_sensors';
+  static const String updateFirmware = 'update_firmware';
+  static const String factoryReset = 'factory_reset';
+  
   /// Create a command to show time on Mochi
   static ESP32Command showTimeCommand() {
     return ESP32Command(cmd: showTime);
@@ -113,6 +129,59 @@ class ESP32Commands {
   /// Create a heartbeat command for connection testing
   static ESP32Command heartbeatCommand() {
     return ESP32Command(cmd: heartbeat);
+  }
+  
+  /// WiFi Configuration Commands
+  static ESP32Command configureWifiCommand(String ssid, String password) {
+    return ESP32Command(
+      cmd: configureWifi, 
+      data: '{"ssid":"$ssid","password":"$password"}',
+    );
+  }
+  
+  static ESP32Command scanWifiNetworksCommand() {
+    return ESP32Command(cmd: scanWifiNetworks);
+  }
+  
+  static ESP32Command getWifiStatusCommand() {
+    return ESP32Command(cmd: getWifiStatus);
+  }
+  
+  static ESP32Command disconnectWifiCommand() {
+    return ESP32Command(cmd: disconnectWifi);
+  }
+  
+  static ESP32Command resetWifiCommand() {
+    return ESP32Command(cmd: resetWifi);
+  }
+  
+  /// Device Settings Commands
+  static ESP32Command setBrightnessCommand(int brightness) {
+    return ESP32Command(cmd: setBrightness, data: brightness.toString());
+  }
+  
+  static ESP32Command setVolumeCommand(int volume) {
+    return ESP32Command(cmd: setVolume, data: volume.toString());
+  }
+  
+  static ESP32Command setAutoConnectCommand(bool enabled) {
+    return ESP32Command(cmd: setAutoConnect, data: enabled.toString());
+  }
+  
+  static ESP32Command setLowPowerModeCommand(bool enabled) {
+    return ESP32Command(cmd: setLowPowerMode, data: enabled.toString());
+  }
+  
+  static ESP32Command calibrateSensorsCommand() {
+    return ESP32Command(cmd: calibrateSensors);
+  }
+  
+  static ESP32Command updateFirmwareCommand() {
+    return ESP32Command(cmd: updateFirmware);
+  }
+  
+  static ESP32Command factoryResetCommand() {
+    return ESP32Command(cmd: factoryReset);
   }
   
   /// Create a command to get device status
