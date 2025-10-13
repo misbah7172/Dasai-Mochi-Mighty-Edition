@@ -7,6 +7,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 import '../services/ble_service.dart';
 import '../services/voice_service.dart';
+import '../services/user_preferences_service.dart';
 import '../utils/theme.dart';
 import '../components/mochi_widgets.dart';
 import 'reminder_screen.dart';
@@ -120,22 +121,27 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MochiTheme.pastelColors['babyBlue']!.withOpacity(0.3),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildMainContent(),
-            _buildVoiceInterface(),
-            _buildBottomNavigation(),
-          ],
-        ),
-      ),
+    return Consumer<UserPreferencesService>(
+      builder: (context, userPrefs, child) {
+        final themeColors = userPrefs.getThemeColors();
+        return Scaffold(
+          backgroundColor: themeColors['background']!.withOpacity(0.8),
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(userPrefs, themeColors),
+                _buildMainContent(userPrefs, themeColors),
+                _buildVoiceInterface(userPrefs, themeColors),
+                _buildBottomNavigation(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -144,14 +150,23 @@ class _DashboardScreenState extends State<DashboardScreen>
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                userPrefs.personalizedGreeting.replaceAll(RegExp(r'[^\w\s]'), ''),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: themeColors['userColor']!,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
               AnimatedTextKit(
                 animatedTexts: [
                   TyperAnimatedText(
                     _currentTime,
-                    textStyle: const TextStyle(
-                      fontSize: 32,
+                    textStyle: TextStyle(
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: themeColors['primary']!,
                     ),
                     speed: const Duration(milliseconds: 100),
                   ),
@@ -161,8 +176,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               Text(
                 _currentDate,
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 14,
+                  color: themeColors['primary']!.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -224,7 +239,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return Expanded(
       child: PageView(
         controller: _pageController,
@@ -234,32 +249,35 @@ class _DashboardScreenState extends State<DashboardScreen>
           });
         },
         children: [
-          _buildDashboardPage(),
-          _buildQuickActionsPage(),
-          _buildStatusPage(),
+          _buildDashboardPage(userPrefs, themeColors),
+          _buildQuickActionsPage(userPrefs, themeColors),
+          _buildStatusPage(themeColors),
         ],
       ),
     );
   }
 
-  Widget _buildDashboardPage() {
+  Widget _buildDashboardPage(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMochiAvatar(),
-          const SizedBox(height: 30),
-          _buildWeatherCard(),
+          _buildMochiAvatar(userPrefs, themeColors),
           const SizedBox(height: 20),
-          _buildQuickStatsRow(),
+          _buildPersonalizedCard(userPrefs, themeColors),
           const SizedBox(height: 20),
-          _buildRecentReminders(),
+          _buildWeatherCard(themeColors),
+          const SizedBox(height: 20),
+          _buildQuickStatsRow(themeColors),
+          const SizedBox(height: 20),
+          _buildRecentReminders(themeColors),
         ],
       ),
     );
   }
 
-  Widget _buildMochiAvatar() {
+  Widget _buildMochiAvatar(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
+    final mochiExpressions = userPrefs.getMochiExpressions();
     return AnimatedBuilder(
       animation: _floatController,
       builder: (context, child) {
@@ -279,13 +297,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.orange.shade300,
-                          Colors.orange.shade600,
+                          themeColors['userColor']!.withOpacity(0.7),
+                          themeColors['userColor']!,
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.shade600.withOpacity(0.4),
+                          color: themeColors['userColor']!.withOpacity(0.4),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -293,7 +311,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     ),
                     child: Center(
                       child: Text(
-                        MochiTheme.mochiExpressions[_mochiMood] ?? '😊',
+                        mochiExpressions.isNotEmpty 
+                            ? mochiExpressions[DateTime.now().second % mochiExpressions.length]
+                            : '😊',
                         style: const TextStyle(fontSize: 48),
                       ),
                     ),
@@ -310,18 +330,101 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildWeatherCard() {
+  Widget _buildPersonalizedCard(UserPreferencesService userPrefs, Map<String, Color> themeColors) {
     return MochiCard(
+      backgroundColor: themeColors['surface']!.withOpacity(0.9),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.person,
+                color: themeColors['userColor'],
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Welcome back, ${userPrefs.userName}!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: themeColors['primary'],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Personality: ${userPrefs.mochiPersonality.toUpperCase()}',
+            style: TextStyle(
+              fontSize: 12,
+              color: themeColors['userColor'],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (userPrefs.interests.isNotEmpty) ...[
+            Text(
+              'Your interests: ${userPrefs.interests.take(3).join(', ')}',
+              style: TextStyle(
+                fontSize: 14,
+                color: themeColors['primary']!.withOpacity(0.8),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+          Row(
+            children: [
+              Icon(
+                Icons.cake,
+                size: 16,
+                color: themeColors['accent'],
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Age: ${userPrefs.userAge}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeColors['primary']!.withOpacity(0.6),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Icon(
+                Icons.palette,
+                size: 16,
+                color: themeColors['accent'],
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Theme: ${userPrefs.currentTheme}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeColors['primary']!.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherCard(Map<String, Color> themeColors) {
+    return MochiCard(
+      backgroundColor: themeColors['surface']!.withOpacity(0.9),
       child: Row(
         children: [
           Container(
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.blue.shade600.withOpacity(0.15),
+              color: themeColors['accent']!.withOpacity(0.15),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: Colors.blue.shade600.withOpacity(0.3),
+                color: themeColors['accent']!.withOpacity(0.3),
                 width: 2,
               ),
             ),
@@ -329,7 +432,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               child: Icon(
                 Icons.wb_sunny,
                 size: 28,
-                color: Colors.blue.shade600,
+                color: themeColors['accent'],
               ),
             ),
           ),

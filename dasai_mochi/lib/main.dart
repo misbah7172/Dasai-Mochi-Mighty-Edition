@@ -9,6 +9,7 @@ import 'services/local_storage_service.dart';
 import 'services/ble_service.dart';
 import 'services/voice_service.dart';
 import 'services/music_service.dart';
+import 'services/user_preferences_service.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
@@ -100,6 +101,14 @@ class DasaiMochiApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BLEService()),
         ChangeNotifierProvider(create: (_) => VoiceService()),
         ChangeNotifierProvider(create: (_) => MusicService()),
+        ChangeNotifierProxyProvider2<LocalStorageService, BLEService, UserPreferencesService>(
+          create: (context) => UserPreferencesService(
+            Provider.of<LocalStorageService>(context, listen: false),
+            Provider.of<BLEService>(context, listen: false),
+          ),
+          update: (context, storage, ble, previous) => 
+              previous ?? UserPreferencesService(storage, ble),
+        ),
       ],
       child: Consumer<LocalStorageService>(
         builder: (context, storageService, _) {

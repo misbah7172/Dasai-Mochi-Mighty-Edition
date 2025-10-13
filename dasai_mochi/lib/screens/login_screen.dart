@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/local_storage_service.dart';
+import '../services/user_preferences_service.dart';
 import '../models/user.dart';
 import '../components/mochi_widgets.dart';
 import 'dashboard_screen.dart';
@@ -692,13 +693,28 @@ class _LoginScreenState extends State<LoginScreen>
       // Save user data
       await storageService.saveUser(user);
       
+      // Initialize user preferences service with collected data
+      if (!mounted) return;
+      final userPrefs = Provider.of<UserPreferencesService>(context, listen: false);
+      await userPrefs.saveUserData(
+        fullName: _name,
+        nickname: _mochiNickname,
+        dateOfBirth: DateTime.now().subtract(Duration(days: _age * 365)),
+        favoriteColor: _favoriteColor,
+        interests: _interests,
+        selectedTheme: _favoriteColor,
+        selectedVoice: _preferredVoice,
+        animationsEnabled: true,
+        soundEffectsEnabled: _enableNotifications,
+        notificationsEnabled: _enableNotifications,
+        voiceCommandsEnabled: _enableVoiceCommands,
+        locationEnabled: _enableLocation,
+      );
+      
       // Mark setup as complete using SharedPreferences directly
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isSetupComplete', true);
       await prefs.setString('userGender', _gender);
-      await prefs.setStringList('userInterests', _interests);
-      await prefs.setBool('enableVoiceCommands', _enableVoiceCommands);
-      await prefs.setBool('enableLocation', _enableLocation);
       
       // Show success feedback
       HapticFeedback.mediumImpact();

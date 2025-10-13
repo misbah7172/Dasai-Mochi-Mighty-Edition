@@ -82,6 +82,8 @@ class ESP32Commands {
   static const String displayText = 'display_text';
   static const String heartbeat = 'heartbeat';
   static const String getStatus = 'get_status';
+  static const String syncUserData = 'sync_user_data';
+  static const String updatePersonality = 'update_personality';
   
   /// Create a command to show time on Mochi
   static ESP32Command showTimeCommand() {
@@ -116,5 +118,15 @@ class ESP32Commands {
   /// Create a command to get device status
   static ESP32Command getStatusCommand() {
     return ESP32Command(cmd: getStatus);
+  }
+  
+  /// Create a command to sync user data with ESP32
+  static ESP32Command syncUserDataCommand(String userData) {
+    return ESP32Command(cmd: syncUserData, data: userData);
+  }
+  
+  /// Create a command to update Mochi's personality
+  static ESP32Command updatePersonalityCommand(String personality) {
+    return ESP32Command(cmd: updatePersonality, data: personality);
   }
 }
