@@ -152,7 +152,7 @@ class _ReminderScreenState extends State<ReminderScreen>
         content: NotificationContent(
           id: reminder.id.hashCode,
           channelKey: 'mochi_reminders',
-          title: 'Mochi Reminder 🍡',
+          title: 'Mochi Health Assistant',
           body: reminder.title,
           bigPicture: 'asset://assets/images/mochi_reminder.png',
           notificationLayout: NotificationLayout.BigPicture,
@@ -572,19 +572,58 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
+  late TextEditingController _dosageController;
+  late TextEditingController _instructionsController;
   late DateTime _selectedDateTime;
   late String _selectedCategory;
   late bool _isActive;
+  late int _frequency;
   late AnimationController _animationController;
 
-  final List<String> _categories = [
-    'Personal',
-    'Work',
-    'Health',
-    'Shopping',
-    'Entertainment',
-    'Other',
-  ];
+  final Map<String, List<String>> _categorizedReminders = {
+    'Health': [
+      'Medicine',
+      'Doctor Appointment',
+      'Exercise',
+      'Water Intake',
+      'Sleep Schedule',
+      'Meal Time',
+      'Vitamins/Supplements',
+      'Blood Pressure Check',
+      'Blood Sugar Check',
+      'Weight Check',
+      'Therapy Session',
+      'Medical Test',
+    ],
+    'Personal': [
+      'Personal Task',
+      'Family Time',
+      'Self Care',
+      'Hobby',
+      'Birthday',
+      'Anniversary',
+    ],
+    'Work': [
+      'Meeting',
+      'Deadline',
+      'Project Update',
+      'Email Follow-up',
+      'Training',
+      'Break Time',
+    ],
+    'Daily Life': [
+      'Shopping',
+      'Cleaning',
+      'Bills Payment',
+      'Car Maintenance',
+      'Pet Care',
+      'Plant Watering',
+    ],
+  };
+
+  List<String> get _allCategories {
+    return _categorizedReminders.values.expand((list) => list).toList();
+  }
 
   @override
   void initState() {
@@ -601,11 +640,18 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
     _descriptionController = TextEditingController(
       text: isEditing ? widget.reminder!.description ?? '' : '',
     );
+    _dosageController = TextEditingController(
+      text: isEditing ? widget.reminder!.dosage ?? '' : '',
+    );
+    _instructionsController = TextEditingController(
+      text: isEditing ? widget.reminder!.instructions ?? '' : '',
+    );
     _selectedDateTime = isEditing 
         ? widget.reminder!.scheduledTime 
         : DateTime.now().add(const Duration(hours: 1));
-    _selectedCategory = isEditing ? widget.reminder!.priority : _categories[0];
+    _selectedCategory = isEditing ? widget.reminder!.priority : _allCategories[0];
     _isActive = isEditing ? widget.reminder!.isActive : true;
+    _frequency = isEditing ? widget.reminder!.frequency ?? 1 : 1;
 
     _animationController.forward();
   }
@@ -614,6 +660,8 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _dosageController.dispose();
+    _instructionsController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -660,6 +708,9 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
         priority: _selectedCategory,
         isActive: _isActive,
         createdAt: widget.reminder?.createdAt ?? DateTime.now(),
+        dosage: _isHealthCategory(_selectedCategory) ? _dosageController.text.trim() : null,
+        frequency: _isHealthCategory(_selectedCategory) ? _frequency : null,
+        instructions: _isHealthCategory(_selectedCategory) ? _instructionsController.text.trim() : null,
       );
 
       await storageService.saveReminder(reminder);
@@ -688,7 +739,7 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
         content: NotificationContent(
           id: reminder.id.hashCode,
           channelKey: 'mochi_reminders',
-          title: 'Mochi Reminder 🍡',
+          title: 'Mochi Health Assistant',
           body: reminder.title,
           bigPicture: 'asset://assets/images/mochi_reminder.png',
           notificationLayout: NotificationLayout.BigPicture,
@@ -747,6 +798,10 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
             const SizedBox(height: 16),
             _buildCategorySelector(theme),
             const SizedBox(height: 16),
+            if (_isHealthCategory(_selectedCategory)) ...[
+              _buildHealthSpecificFields(theme),
+              const SizedBox(height: 16),
+            ],
             _buildActiveToggle(theme),
             const SizedBox(height: 32),
             _buildSaveButton(theme),
@@ -866,8 +921,8 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
       child: DropdownButtonFormField<String>(
         value: _selectedCategory,
         decoration: InputDecoration(
-          labelText: 'Priority',
-          prefixIcon: Icon(Icons.priority_high, color: theme['accent']),
+          labelText: 'Reminder Type',
+          prefixIcon: Icon(Icons.category, color: theme['accent']),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -875,28 +930,16 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
           filled: true,
           fillColor: Colors.transparent,
         ),
-        items: _categories.map((category) {
-          return DropdownMenuItem(
-            value: category,
-            child: Row(
-              children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(category),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(category),
-              ],
-            ),
-          );
-        }).toList(),
+        items: _buildCategoryDropdownItems(),
         onChanged: (value) {
           setState(() {
             _selectedCategory = value!;
+            // Reset health fields when switching away from health category
+            if (!_isHealthCategory(_selectedCategory)) {
+              _dosageController.clear();
+              _instructionsController.clear();
+              _frequency = 1;
+            }
           });
         },
       ),
@@ -959,27 +1002,326 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen>
     );
   }
 
+  List<DropdownMenuItem<String>> _buildCategoryDropdownItems() {
+    List<DropdownMenuItem<String>> items = [];
+    
+    _categorizedReminders.forEach((sectionName, categories) {
+      // Add section header
+      items.add(
+        DropdownMenuItem<String>(
+          enabled: false,
+          value: null,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              sectionName,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: _getSectionColor(sectionName),
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ),
+      );
+      
+      // Add category items
+      for (String category in categories) {
+        items.add(
+          DropdownMenuItem<String>(
+            value: category,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    _getCategoryIcon(category),
+                    size: 20,
+                    color: _getCategoryColor(category),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(category)),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    });
+    
+    return items;
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      // Health Icons
+      case 'medicine':
+        return Icons.medication;
+      case 'doctor appointment':
+        return Icons.local_hospital;
+      case 'exercise':
+        return Icons.fitness_center;
+      case 'water intake':
+        return Icons.local_drink;
+      case 'sleep schedule':
+        return Icons.bedtime;
+      case 'meal time':
+        return Icons.restaurant;
+      case 'vitamins/supplements':
+        return Icons.vaccines;
+      case 'blood pressure check':
+        return Icons.monitor_heart;
+      case 'blood sugar check':
+        return Icons.bloodtype;
+      case 'weight check':
+        return Icons.scale;
+      case 'therapy session':
+        return Icons.psychology;
+      case 'medical test':
+        return Icons.science;
+      
+      // Personal Icons
+      case 'personal task':
+        return Icons.person;
+      case 'family time':
+        return Icons.family_restroom;
+      case 'self care':
+        return Icons.spa;
+      case 'hobby':
+        return Icons.palette;
+      case 'birthday':
+        return Icons.cake;
+      case 'anniversary':
+        return Icons.favorite;
+      
+      // Work Icons
+      case 'meeting':
+        return Icons.groups;
+      case 'deadline':
+        return Icons.schedule;
+      case 'project update':
+        return Icons.update;
+      case 'email follow-up':
+        return Icons.email;
+      case 'training':
+        return Icons.school;
+      case 'break time':
+        return Icons.coffee;
+      
+      // Daily Life Icons
+      case 'shopping':
+        return Icons.shopping_cart;
+      case 'cleaning':
+        return Icons.cleaning_services;
+      case 'bills payment':
+        return Icons.payment;
+      case 'car maintenance':
+        return Icons.car_repair;
+      case 'pet care':
+        return Icons.pets;
+      case 'plant watering':
+        return Icons.eco;
+      
+      default:
+        return Icons.notifications;
+    }
+  }
+
   Color _getCategoryColor(String category) {
     switch (category.toLowerCase()) {
-      case 'high':
-        return Colors.red;
-      case 'medium':
-        return Colors.orange;
-      case 'low':
-        return Colors.green;
-      case 'work':
-        return Colors.blue;
-      case 'personal':
-        return Colors.green;
-      case 'health':
-        return Colors.red;
+      // Health Colors (Red theme for medical urgency)
+      case 'medicine':
+      case 'doctor appointment':
+      case 'blood pressure check':
+      case 'blood sugar check':
+      case 'medical test':
+        return Colors.red.shade600;
+      case 'exercise':
+      case 'water intake':
+      case 'vitamins/supplements':
+        return Colors.green.shade600;
+      case 'sleep schedule':
+      case 'therapy session':
+        return Colors.indigo.shade600;
+      case 'meal time':
+      case 'weight check':
+        return Colors.orange.shade600;
+      
+      // Personal Colors (Green theme)
+      case 'personal task':
+      case 'self care':
+      case 'hobby':
+        return Colors.green.shade600;
+      case 'family time':
+      case 'birthday':
+      case 'anniversary':
+        return Colors.pink.shade600;
+      
+      // Work Colors (Blue theme)
+      case 'meeting':
+      case 'deadline':
+      case 'project update':
+      case 'email follow-up':
+      case 'training':
+        return Colors.blue.shade600;
+      case 'break time':
+        return Colors.cyan.shade600;
+      
+      // Daily Life Colors (Purple theme)
       case 'shopping':
-        return Colors.orange;
-      case 'entertainment':
-        return Colors.purple;
+      case 'cleaning':
+      case 'bills payment':
+        return Colors.purple.shade600;
+      case 'car maintenance':
+      case 'pet care':
+      case 'plant watering':
+        return Colors.teal.shade600;
+      
       default:
-        return Colors.grey;
+        return Colors.grey.shade600;
     }
+  }
+
+  Color _getSectionColor(String sectionName) {
+    switch (sectionName.toLowerCase()) {
+      case 'health':
+        return Colors.red.shade700;
+      case 'personal':
+        return Colors.green.shade700;
+      case 'work':
+        return Colors.blue.shade700;
+      case 'daily life':
+        return Colors.purple.shade700;
+      default:
+        return Colors.grey.shade700;
+    }
+  }
+
+  bool _isHealthCategory(String category) {
+    return _categorizedReminders['Health']!.contains(category);
+  }
+
+  Widget _buildHealthSpecificFields(Map<String, Color> theme) {
+    return Column(
+      children: [
+        // Dosage Field (for medicine reminders)
+        if (_selectedCategory == 'Medicine' || _selectedCategory == 'Vitamins/Supplements') ...[
+          Container(
+            decoration: BoxDecoration(
+              color: theme['surface'],
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: TextFormField(
+              controller: _dosageController,
+              decoration: InputDecoration(
+                labelText: 'Dosage (e.g., 1 tablet, 5ml)',
+                prefixIcon: Icon(Icons.medication, color: theme['accent']),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.transparent,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        
+        // Frequency Field
+        Container(
+          decoration: BoxDecoration(
+            color: theme['surface'],
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: ListTile(
+                  leading: Icon(Icons.schedule, color: theme['accent']),
+                  title: const Text('Frequency per day'),
+                  subtitle: Text('$_frequency times per day'),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: _frequency > 1 ? () {
+                        setState(() {
+                          _frequency--;
+                        });
+                      } : null,
+                      icon: const Icon(Icons.remove),
+                    ),
+                    Text(
+                      '$_frequency',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _frequency++;
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Instructions Field
+        Container(
+          decoration: BoxDecoration(
+            color: theme['surface'],
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: TextFormField(
+            controller: _instructionsController,
+            maxLines: 2,
+            decoration: InputDecoration(
+              labelText: 'Instructions (e.g., Take with food)',
+              prefixIcon: Icon(Icons.info_outline, color: theme['accent']),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.transparent,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   String _formatDateTime(DateTime dateTime) {

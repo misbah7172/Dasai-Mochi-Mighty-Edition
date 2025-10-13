@@ -40,6 +40,15 @@ class Reminder extends HiveObject {
   @HiveField(11)
   String? emoji;
 
+  @HiveField(12)
+  String? dosage; // For medicine reminders
+
+  @HiveField(13)
+  int? frequency; // Times per day
+
+  @HiveField(14)
+  String? instructions; // Special instructions
+
   Reminder({
     required this.id,
     required this.title,
@@ -53,6 +62,9 @@ class Reminder extends HiveObject {
     this.completedAt,
     this.priority = 'medium',
     this.emoji,
+    this.dosage,
+    this.frequency,
+    this.instructions,
   });
 
   Map<String, dynamic> toJson() {
@@ -69,6 +81,9 @@ class Reminder extends HiveObject {
       'completedAt': completedAt?.toIso8601String(),
       'priority': priority,
       'emoji': emoji,
+      'dosage': dosage,
+      'frequency': frequency,
+      'instructions': instructions,
     };
   }
 
@@ -88,6 +103,9 @@ class Reminder extends HiveObject {
           : null,
       priority: json['priority'] ?? 'medium',
       emoji: json['emoji'],
+      dosage: json['dosage'],
+      frequency: json['frequency'],
+      instructions: json['instructions'],
     );
   }
 
@@ -104,6 +122,9 @@ class Reminder extends HiveObject {
     DateTime? completedAt,
     String? priority,
     String? emoji,
+    String? dosage,
+    int? frequency,
+    String? instructions,
   }) {
     return Reminder(
       id: id ?? this.id,
@@ -118,6 +139,9 @@ class Reminder extends HiveObject {
       completedAt: completedAt ?? this.completedAt,
       priority: priority ?? this.priority,
       emoji: emoji ?? this.emoji,
+      dosage: dosage ?? this.dosage,
+      frequency: frequency ?? this.frequency,
+      instructions: instructions ?? this.instructions,
     );
   }
 }
