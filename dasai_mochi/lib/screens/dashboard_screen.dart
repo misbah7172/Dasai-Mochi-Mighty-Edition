@@ -186,14 +186,14 @@ class _DashboardScreenState extends State<DashboardScreen>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: isConnected 
-                ? MochiTheme.pastelColors['mintGreen']!.withOpacity(0.8)
-                : MochiTheme.pastelColors['softPink']!.withOpacity(0.8),
+                ? Colors.green.shade600.withOpacity(0.9)
+                : Colors.red.shade600.withOpacity(0.9),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: (isConnected 
-                    ? MochiTheme.pastelColors['mintGreen']! 
-                    : MochiTheme.pastelColors['softPink']!)
+                    ? Colors.green.shade600 
+                    : Colors.red.shade600)
                     .withOpacity(0.3 + (_pulseController.value * 0.3)),
                 blurRadius: 10,
                 spreadRadius: 2,
@@ -279,13 +279,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          MochiTheme.pastelColors['lemonYellow']!,
-                          MochiTheme.pastelColors['peachOrange']!,
+                          Colors.orange.shade300,
+                          Colors.orange.shade600,
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: MochiTheme.pastelColors['peachOrange']!.withOpacity(0.4),
+                          color: Colors.orange.shade600.withOpacity(0.4),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -318,11 +318,19 @@ class _DashboardScreenState extends State<DashboardScreen>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: MochiTheme.pastelColors['babyBlue']!.withOpacity(0.3),
+              color: Colors.blue.shade600.withOpacity(0.15),
               borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: Colors.blue.shade600.withOpacity(0.3),
+                width: 2,
+              ),
             ),
-            child: const Center(
-              child: Text('🌤️', style: TextStyle(fontSize: 28)),
+            child: Center(
+              child: Icon(
+                Icons.wb_sunny,
+                size: 28,
+                color: Colors.blue.shade600,
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -364,19 +372,19 @@ class _DashboardScreenState extends State<DashboardScreen>
       children: [
         Expanded(
           child: _buildStatCard(
-            icon: '🔋',
+            iconData: Icons.battery_std,
             title: 'Battery',
             value: _batteryLevel,
-            color: MochiTheme.pastelColors['mintGreen']!,
+            color: Colors.green.shade600, // Health/good status color
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: _buildStatCard(
-            icon: '📱',
+            iconData: Icons.signal_cellular_alt,
             title: 'Connection',
             value: 'Strong',
-            color: MochiTheme.pastelColors['lavender']!,
+            color: Colors.blue.shade600, // Work/information color
           ),
         ),
       ],
@@ -384,34 +392,49 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildStatCard({
-    required String icon,
+    required IconData iconData,
     required String title,
     required String value,
     required Color color,
   }) {
     return MochiCard(
-      backgroundColor: color.withOpacity(0.2),
-      child: Column(
-        children: [
-          Text(icon, style: const TextStyle(fontSize: 24)),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+      backgroundColor: color.withOpacity(0.15),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 2,
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black.withOpacity(0.6),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Icon(
+              iconData,
+              size: 28,
+              color: color,
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color.withOpacity(0.8),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: color.withOpacity(0.9),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -439,15 +462,15 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildReminderItem('💊', 'Take vitamins', '9:00 AM'),
-          _buildReminderItem('💻', 'Team meeting', '2:00 PM'),
-          _buildReminderItem('🎵', 'Music practice', '6:30 PM'),
+          _buildReminderItem(Icons.medication, 'Take vitamins', '9:00 AM', Colors.red.shade600),
+          _buildReminderItem(Icons.groups, 'Team meeting', '2:00 PM', Colors.blue.shade600),
+          _buildReminderItem(Icons.music_note, 'Music practice', '6:30 PM', Colors.purple.shade600),
         ],
       ),
     );
   }
 
-  Widget _buildReminderItem(String icon, String title, String time) {
+  Widget _buildReminderItem(IconData iconData, String title, String time, Color color) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -456,10 +479,20 @@ class _DashboardScreenState extends State<DashboardScreen>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: MochiTheme.pastelColors['softPink']!.withOpacity(0.3),
+              color: color.withOpacity(0.15),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: color.withOpacity(0.3),
+                width: 1.5,
+              ),
             ),
-            child: Center(child: Text(icon, style: const TextStyle(fontSize: 18))),
+            child: Center(
+              child: Icon(
+                iconData,
+                size: 20,
+                color: color,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -528,27 +561,38 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Widget _buildQuickActionCard(String command, int index) {
-    final colors = [
-      MochiTheme.pastelColors['softPink']!,
-      MochiTheme.pastelColors['mintGreen']!,
-      MochiTheme.pastelColors['lavender']!,
-      MochiTheme.pastelColors['peachOrange']!,
-      MochiTheme.pastelColors['lemonYellow']!,
-      MochiTheme.pastelColors['babyBlue']!,
-    ];
-
     return GestureDetector(
       onTap: () => _executeQuickAction(index),
       child: MochiCard(
-        backgroundColor: colors[index % colors.length].withOpacity(0.3),
-        child: Center(
-          child: Text(
-            command,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+        backgroundColor: _getActionCardColor(command).withOpacity(0.15),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _getActionCardColor(command).withOpacity(0.3),
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  _getActionCardIcon(command),
+                  size: 32,
+                  color: _getActionCardColor(command),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _cleanActionText(command),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: _getActionCardColor(command).withOpacity(0.8),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -556,6 +600,47 @@ class _DashboardScreenState extends State<DashboardScreen>
         .scale(delay: Duration(milliseconds: index * 100))
         .fadeIn(),
     );
+  }
+
+  Color _getActionCardColor(String command) {
+    String cleanCommand = command.toLowerCase();
+    if (cleanCommand.contains('reminder')) {
+      return Colors.red.shade600; // Health/reminder priority
+    } else if (cleanCommand.contains('chat')) {
+      return Colors.green.shade600; // Personal interaction
+    } else if (cleanCommand.contains('music')) {
+      return Colors.purple.shade600; // Entertainment
+    } else if (cleanCommand.contains('weather')) {
+      return Colors.blue.shade600; // Information/work-related
+    } else if (cleanCommand.contains('battery')) {
+      return Colors.orange.shade600; // Status/shopping category color
+    } else if (cleanCommand.contains('settings')) {
+      return Colors.grey.shade600; // Default/utility
+    }
+    return Colors.grey.shade600;
+  }
+
+  IconData _getActionCardIcon(String command) {
+    String cleanCommand = command.toLowerCase();
+    if (cleanCommand.contains('reminder')) {
+      return Icons.notification_add;
+    } else if (cleanCommand.contains('chat')) {
+      return Icons.chat_bubble_outline;
+    } else if (cleanCommand.contains('music')) {
+      return Icons.music_note;
+    } else if (cleanCommand.contains('weather')) {
+      return Icons.wb_sunny;
+    } else if (cleanCommand.contains('battery')) {
+      return Icons.battery_std;
+    } else if (cleanCommand.contains('settings')) {
+      return Icons.settings;
+    }
+    return Icons.apps;
+  }
+
+  String _cleanActionText(String command) {
+    // Remove emojis and clean up text
+    return command.replaceAll(RegExp(r'[^\w\s]'), '').trim();
   }
 
   Widget _buildStatusPage() {
@@ -696,8 +781,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: _isListening
-                              ? [Colors.red.shade300, Colors.red.shade500]
-                              : [MochiTheme.pastelColors['softPink']!, MochiTheme.pastelColors['lavender']!],
+                              ? [Colors.red.shade400, Colors.red.shade600]
+                              : [Colors.blue.shade400, Colors.blue.shade600],
                         ),
                         boxShadow: [
                           BoxShadow(
