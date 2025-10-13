@@ -1,0 +1,142 @@
+# ================================================================
+# Dasai Mochi Project - Root Level Security Exclusions
+# ================================================================
+
+# ============ ENVIRONMENT & SECURITY FILES ============
+# Environment configuration files
+.env
+.env.*
+*.env
+env.json
+environment.json
+config.json
+secrets.json
+
+# API Keys and sensitive configurations
+**/secrets/
+**/keys/
+**/credentials/
+**/*key*.json
+**/*secret*.json
+**/*config*.json
+
+# Certificate files
+*.p12
+*.p8
+*.pem
+*.crt
+*.der
+*.pfx
+*.keystore
+*.jks
+
+# SSH Keys
+id_rsa
+id_ed25519
+*.private
+private_key*
+
+# ============ DEVELOPMENT ENVIRONMENT ============
+# IDE and Editor files
+.vscode/
+.idea/
+*.iml
+*.code-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ============ BUILD ARTIFACTS ============
+# Build directories
+build/
+dist/
+out/
+target/
+bin/
+obj/
+
+# Logs
+*.log
+logs/
+log/
+
+# Cache directories
+.cache/
+*.cache
+.temp/
+tmp/
+
+# ============ DEPENDENCIES ============
+node_modules/
+.pub-cache/
+.dart_tool/
+
+# ============ ESP32 FIRMWARE SPECIFIC ============
+# PlatformIO
+esp32_firmware/.pio/
+esp32_firmware/.vscode/c_cpp_properties.json
+esp32_firmware/.vscode/launch.json
+esp32_firmware/.vscode/ipch
+
+# Firmware binaries
+*.bin
+*.elf
+*.hex
+*.map
+
+# ============ FLUTTER PROJECT SPECIFICS ============
+# Flutter build artifacts
+**/build/
+**/.dart_tool/
+**/.pub-cache/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+
+# Generated files
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+
+# ============ DATABASE FILES ============
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.hive
+
+# ============ USER SPECIFIC & TEMPORARY ============
+# User-specific configuration
+user_data/
+local_config.*
+personal_notes.*
+test_data/
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+
+# Coverage reports
+coverage/
+lcov.info
+
+# ============ CI/CD SECRETS ============
+# GitHub Actions secrets
+.github/workflows/secrets.yml
+deploy_script.*
+setup_env.*
+
+# ============ LARGE MEDIA FILES (OPTIONAL) ============
+# Uncomment if you want to exclude large media files
+# *.mp3
+# *.wav
+# *.mp4
+# *.avi
+# *.zip
+# *.tar.gz

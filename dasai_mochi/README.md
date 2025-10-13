@@ -156,15 +156,46 @@ A delightful Flutter mobile app that pairs with an ESP32-based Mochi device via 
    ```
 
 ### Environment Variables
-Create a `.env` file in the root directory:
-```env
-# Weather API (OpenWeatherMap)
-WEATHER_API_KEY=your_weather_api_key_here
 
-# App Configuration
-APP_VERSION=1.0.0
-DEBUG_MODE=true
-```
+**IMPORTANT SECURITY NOTE:** Never commit your `.env` file to version control!
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configure your API keys in `.env`:**
+   ```env
+   # Weather API (OpenWeatherMap) - Get free key from: https://openweathermap.org/api
+   WEATHER_API_KEY=your_actual_openweathermap_api_key_here
+   
+   # Firebase Configuration - Get from Firebase Console
+   FIREBASE_API_KEY=your_actual_firebase_key_here
+   FIREBASE_PROJECT_ID=your_firebase_project_id
+   
+   # OpenAI API (for AI features) - Get from: https://platform.openai.com/api-keys
+   OPENAI_API_KEY=your_actual_openai_key_here
+   
+   # Google Maps (for location features) - Get from Google Cloud Console
+   GOOGLE_MAPS_API_KEY=your_actual_maps_key_here
+   
+   # App Configuration
+   APP_VERSION=1.0.0
+   DEBUG_MODE=true
+   ```
+
+3. **Required API Keys:**
+   - **OpenWeatherMap API** (Free): For weather functionality
+   - **Firebase** (Free tier available): For cloud storage and authentication
+   - **OpenAI API** (Paid): For AI chat features
+   - **Google Maps API** (Free tier available): For location services
+
+4. **Security Best Practices:**
+   - The `.env` file is already excluded in `.gitignore`
+   - Never commit API keys to version control
+   - Use different keys for development and production
+   - Regularly rotate your API keys
+   - Keep your keys secure and don't share them
 
 ## 📁 Project Structure
 

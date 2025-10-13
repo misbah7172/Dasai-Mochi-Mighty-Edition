@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'services/local_storage_service.dart';
@@ -11,12 +10,30 @@ import 'services/music_service.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'utils/theme.dart';
+import 'utils/app_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
+  // Load and validate environment configuration
+  try {
+    await AppConfig.initialize();
+    
+    // Validate required configurations
+    final configErrors = AppConfig.validateConfig();
+    if (configErrors.isNotEmpty) {
+      debugPrint('Configuration warnings:');
+      for (final error in configErrors) {
+        debugPrint('- $error');
+      }
+    }
+    
+    debugPrint('Environment: ${AppConfig.appEnvironment}');
+    debugPrint('Debug mode: ${AppConfig.debugMode}');
+  } catch (e) {
+    debugPrint('Configuration error: $e');
+    // You can choose to continue with default values or exit
+  }
   
   // Initialize notifications
   await _initializeNotifications();

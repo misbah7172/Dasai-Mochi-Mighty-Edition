@@ -1,3 +1,130 @@
+# ================================================================
+# Dasai Mochi - Security and Build Artifacts Exclusions
+# ================================================================
+
+# ============ SECURITY & SENSITIVE DATA ============
+# Environment files with sensitive data
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.test
+*.env
+env.json
+environment.json
+
+# API Keys and Secrets
+**/secrets/
+**/keys/
+**/credentials/
+**/*key*.json
+**/*secret*.json
+**/*config*.json
+**/firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# Certificate and Keystore files
+*.p12
+*.p8
+*.mobileprovision
+*.keystore
+*.jks
+*.pem
+*.crt
+*.der
+*.pfx
+
+# Private keys
+id_rsa
+id_ed25519
+*.private
+private_key*
+*_private_key*
+
+# ============ FLUTTER & DART SPECIFIC ============
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+pubspec_overrides.yaml
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.chopper.dart
+*.config.dart
+l10n.dart
+
+# ============ BUILD ARTIFACTS ============
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle/
+/android/captures/
+/android/gradlew
+/android/gradlew.bat
+/android/local.properties
+
+# iOS build artifacts
+/ios/build/
+/ios/Runner.xcworkspace/xcuserdata/
+/ios/Runner.xcodeproj/xcuserdata/
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/ephemeral/
+/ios/Pods/
+
+# Web build artifacts
+/web/build/
+
+# ============ IDE & EDITOR FILES ============
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+*.hprof
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Android Studio
+.gradle
+/local.properties
+/android/app/google-services.json
+/.idea/workspace.xml
+/.idea/libraries/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.loadpath
+.recommenders
+
+# ============ SYSTEM FILES ============
 # Miscellaneous
 *.class
 *.log
@@ -11,35 +138,166 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+.fvm/
+.packages
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# macOS
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
+# Linux
+*~
+.directory
+.Trash-*
 
+# ============ LOGS & DEBUG FILES ============
+# Log files
+*.log
+logs/
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# ============ DEPENDENCY DIRECTORIES ============
+# node modules (if using any Node.js tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Temporary folders
+tmp/
+temp/
+
+# ============ DATABASE & STORAGE ============
+# SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+
+# Hive databases
+*.hive
+*.lock
+
+# ============ ESP32 & FIRMWARE SPECIFIC ============
+# PlatformIO
+.pio
+.pioenvs
+.piolibdeps
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch
+.platformio
+
+# ESP32 specific
+esp32_firmware/.pio/
+esp32_firmware/.vscode/
+esp32_firmware/lib/
+esp32_firmware/test/
+
+# Firmware binaries
+*.bin
+*.elf
+*.hex
+*.map
+
+# ============ TESTING & CI/CD ============
+# Test coverage
+test/coverage/
+coverage/
+.nyc_output/
+lcov.info
+
+# CI/CD specific
+.github/workflows/secrets.yml
+
+# ============ BACKUP & TEMPORARY FILES ============
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+*~
+#*#
+
+# Cache files
+.cache/
+*.cache
+.temp/
+
+# ============ SYMBOLICATION & OBFUSCATION ============
 # Symbolication related
 app.*.symbols
+*.dSYM/
 
 # Obfuscation related
 app.*.map.json
+*.obfuscated.dart
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# ============ CUSTOM PROJECT EXCLUSIONS ============
+# User-specific files that shouldn't be tracked
+user_data/
+personal_notes.txt
+local_config.dart
+test_data/
+debug_output/
+
+# Generated documentation
+doc/
+docs/generated/
+
+# Custom scripts with sensitive data
+deploy_script.sh
+setup_env.sh
+
+# Audio files (if not needed in repo)
+# Uncomment if audio files are large and stored elsewhere
+# *.mp3
+# *.wav
+# *.m4a
+# *.aac
+# *.flac
+
+# Video files
+# *.mp4
+# *.avi
+# *.mov
+# *.wmv
