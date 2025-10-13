@@ -409,6 +409,21 @@ class LocalStorageService extends ChangeNotifier {
     }
   }
 
+  /// Reset setup completion (for re-onboarding)
+  Future<void> resetSetup() async {
+    try {
+      await _prefs.setBool('isSetupComplete', false);
+      debugPrint("Storage: Setup completion reset");
+    } catch (e) {
+      debugPrint("Storage: Reset setup error: $e");
+    }
+  }
+
+  /// Check if setup is complete
+  bool isSetupComplete() {
+    return _prefs.getBool('isSetupComplete') ?? false;
+  }
+
   /// Export user data
   Map<String, dynamic> exportUserData() {
     try {

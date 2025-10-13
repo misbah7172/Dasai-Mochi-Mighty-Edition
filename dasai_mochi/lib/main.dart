@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'services/local_storage_service.dart';
 import 'services/ble_service.dart';
@@ -9,6 +11,7 @@ import 'services/voice_service.dart';
 import 'services/music_service.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/dashboard_screen.dart';
 import 'utils/theme.dart';
 import 'utils/app_config.dart';
 
@@ -121,6 +124,7 @@ class AppInitializer extends StatefulWidget {
 
 class _AppInitializerState extends State<AppInitializer> {
   bool _isInitialized = false;
+  bool _isSetupComplete = false;
 
   @override
   void initState() {
@@ -134,6 +138,15 @@ class _AppInitializerState extends State<AppInitializer> {
     try {
       // Initialize storage service
       await storageService.initialize();
+      
+      // Request essential permissions
+      await _requestPermissions();
+      
+      // Check if setup is complete using SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      _isSetupComplete = prefs.getBool('isSetupComplete') ?? false;
+      
+      debugPrint('Setup status: ${_isSetupComplete ? "Complete" : "Incomplete"}');
       
       // Wait for splash screen duration
       await Future.delayed(const Duration(seconds: 3));
@@ -153,13 +166,26 @@ class _AppInitializerState extends State<AppInitializer> {
       });
     }
   }
+  
+  Future<void> _requestPermissions() async {
+    try {
+      // Request basic permissions silently
+      await [
+        Permission.bluetooth,
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+        Permission.location,
+      ].request();
+    } catch (e) {
+      debugPrint('Permission request error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     if (_isInitialized) {
-      // Force show login screen for demo - change this back for production
-      // return _isSetupComplete ? const DashboardScreen() : const LoginScreen();
-      return const LoginScreen(); // Always show login to demonstrate the full flow
+      // Show dashboard if setup is complete, otherwise show login
+      return _isSetupComplete ? const DashboardScreen() : const LoginScreen();
     }
     return const SplashScreen();
   }
